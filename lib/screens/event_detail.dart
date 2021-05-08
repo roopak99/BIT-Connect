@@ -1,19 +1,24 @@
+import 'package:bit_connect/providers/events.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../models/event.dart';
 
 class EventDetail extends StatelessWidget {
   static const routeName = '/event-detail';
   @override
   Widget build(BuildContext context) {
     final eventId = ModalRoute.of(context).settings.arguments as String;
+    final loadedEvent =
+        Provider.of<Events>(context, listen: false).findById(eventId);
+
     return Scaffold(
-      appBar: AppBar(
-        title: Text('title'),
-      ),
-      body: Container(
-        child: Column(
-          children: [Text(eventId)],
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text(loadedEvent.title),
         ),
-      ),
-    );
+        body: Container(
+          child: Text(loadedEvent.description),
+        ));
   }
 }

@@ -1,5 +1,6 @@
 import 'package:bit_connect/screens/event_detail.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class EventTile extends StatelessWidget {
   final String eid;
@@ -14,10 +15,16 @@ class EventTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 8,
+      elevation: 5,
       child: ListTile(
-        leading: Text(title),
-        title: Text(eventDate.toString()),
+        leading: Text(
+          DateFormat('dd MMM yy').format(eventDate),
+        ),
+        title: Text(
+          title,
+          style: TextStyle(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
         trailing: IconButton(
           onPressed: () {},
           icon: Icon(Icons.notifications_off_outlined),
