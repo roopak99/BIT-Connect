@@ -1,7 +1,7 @@
 import 'package:bit_connect/providers/events.dart';
-import 'package:bit_connect/screens/event_detail.dart';
+import 'package:bit_connect/screens/event_detail_screen.dart';
 import 'package:bit_connect/screens/events_overview_screen.dart';
-import 'package:bit_connect/screens/user_events.dart';
+import 'package:bit_connect/screens/user_events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './screens/edit_event_screen.dart';

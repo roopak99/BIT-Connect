@@ -1,4 +1,3 @@
-import 'package:bit_connect/screens/edit_event_screen.dart';
 import 'package:flutter/material.dart';
 
 class UserEventItem extends StatelessWidget {

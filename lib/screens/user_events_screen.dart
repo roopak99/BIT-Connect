@@ -13,7 +13,7 @@ class UserEvents extends StatelessWidget {
     return Scaffold(
         drawer: AppDrawer(),
         appBar: AppBar(
-          title: Text('User Events'),
+          title: Text('Your Events'),
           actions: [
             IconButton(
               icon: Icon(Icons.add),

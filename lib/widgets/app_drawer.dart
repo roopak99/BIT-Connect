@@ -1,4 +1,4 @@
-import 'package:bit_connect/screens/user_events.dart';
+import 'package:bit_connect/screens/user_events_screen.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {

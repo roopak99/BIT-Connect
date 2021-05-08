@@ -45,7 +45,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     var parsedDate = DateFormat('dd MMM yy').format(selectedDate);
     return Scaffold(
       appBar: AppBar(
-        title: Text('edit event screen'),
+        title: Text('Edit Event'),
       ),
       body: Padding(
         padding: EdgeInsets.all(15),
