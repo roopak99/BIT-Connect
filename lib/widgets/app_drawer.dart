@@ -1,3 +1,4 @@
+import 'package:bit_connect/screens/user_events.dart';
 import 'package:flutter/material.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -16,6 +17,14 @@ class AppDrawer extends StatelessWidget {
             title: Text("Home"),
             onTap: () {
               Navigator.of(context).pushReplacementNamed('/');
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.calendar_today_rounded),
+            title: Text("Your Events"),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(UserEvents.routeName);
             },
           )
         ],

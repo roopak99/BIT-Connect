@@ -2,8 +2,6 @@ import 'package:bit_connect/providers/events.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/event.dart';
-
 class EventDetail extends StatelessWidget {
   static const routeName = '/event-detail';
   @override

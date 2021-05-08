@@ -3,7 +3,8 @@ import 'package:bit_connect/widgets/events_list.dart';
 import 'package:flutter/material.dart';
 
 class EventsOverviewScreen extends StatelessWidget {
-  static const routeName = 'home';
+  static const routeName = '/';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

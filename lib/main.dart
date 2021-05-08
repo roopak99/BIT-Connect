@@ -1,7 +1,8 @@
 import 'package:bit_connect/providers/events.dart';
-import 'package:bit_connect/screens/dummy_login.dart';
+import 'package:bit_connect/screens/edit_event_screen.dart';
 import 'package:bit_connect/screens/event_detail.dart';
 import 'package:bit_connect/screens/events_overview_screen.dart';
+import 'package:bit_connect/screens/user_events.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -20,10 +21,12 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: DummyLogin(),
+        // home: DummyLogin(),
         routes: {
-          'home': (context) => EventsOverviewScreen(),
+          '/': (context) => EventsOverviewScreen(),
           EventDetail.routeName: (context) => EventDetail(),
+          UserEvents.routeName: (context) => UserEvents(),
+          EditEventSceen.routeName: (context) => EditEventSceen(),
         },
       ),
     );

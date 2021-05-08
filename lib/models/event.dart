@@ -6,6 +6,7 @@ class Event {
   final String description;
   final String imageURL;
   final DateTime eventDate;
+  bool isFavourite;
 
   Event({
     @required this.eid,
@@ -13,5 +14,6 @@ class Event {
     @required this.description,
     @required this.eventDate,
     this.imageURL,
+    isFavourite = false,
   });
 }
