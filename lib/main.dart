@@ -1,10 +1,10 @@
 import 'package:bit_connect/providers/events.dart';
-import 'package:bit_connect/screens/edit_event_screen.dart';
 import 'package:bit_connect/screens/event_detail.dart';
 import 'package:bit_connect/screens/events_overview_screen.dart';
 import 'package:bit_connect/screens/user_events.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import './screens/edit_event_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => EventsOverviewScreen(),
           EventDetail.routeName: (context) => EventDetail(),
           UserEvents.routeName: (context) => UserEvents(),
-          EditEventSceen.routeName: (context) => EditEventSceen(),
+          EditEventScreen.routeName: (context) => EditEventScreen(),
         },
       ),
     );

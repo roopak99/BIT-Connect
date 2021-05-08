@@ -18,7 +18,7 @@ class UserEvents extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                Navigator.of(context).pushNamed(EditEventSceen.routeName);
+                Navigator.of(context).pushNamed(EditEventScreen.routeName);
               },
             )
           ],
