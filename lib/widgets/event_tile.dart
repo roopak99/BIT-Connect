@@ -1,4 +1,4 @@
-import 'package:bit_connect/screens/event_detail.dart';
+import 'package:bit_connect/screens/event_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 

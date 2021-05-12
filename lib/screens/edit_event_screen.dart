@@ -1,5 +1,27 @@
+import 'package:bit_connect/models/event.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
+class EditedEvent {
+  String eid;
+  String title;
+  String description;
+  String imageURL;
+  DateTime eventDate;
+  String branch;
+  String batch;
+  bool isFavourite;
+
+  EditedEvent({
+    this.eid,
+    this.title,
+    this.description,
+    this.eventDate,
+    this.batch,
+    this.branch,
+    this.imageURL,
+    isFavourite = false,
+  });
+}
 
 class EditEventScreen extends StatefulWidget {
   static const routeName = '/edit-event-screen';
@@ -8,6 +30,7 @@ class EditEventScreen extends StatefulWidget {
 }
 
 class _EditEventScreenState extends State<EditEventScreen> {
+  TextEditingController _dateController = TextEditingController();
   var _branches = [
     "CSE",
     "IT",
@@ -23,26 +46,42 @@ class _EditEventScreenState extends State<EditEventScreen> {
     "2018-2022",
     "2017-2021",
   ];
-  var _currentSelectedBranch;
-  var _currentSelectedBatch;
+  String currentSelectedBranch;
+  String currentSelectedBatch;
+  final _form = GlobalKey<FormState>();
+  var _editedEvent = EditedEvent();
 
   DateTime selectedDate = DateTime.now();
 
-  Future<void> _selectDate(BuildContext context) async {
+  _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
         initialDate: selectedDate,
-        firstDate: DateTime(2015, 8),
-        lastDate: DateTime(2101));
+        firstDate: DateTime(2019, 8),
+        lastDate: DateTime(2100));
     if (picked != null && picked != selectedDate)
       setState(() {
         selectedDate = picked;
+        var date =
+            "${picked.toLocal().day}/${picked.toLocal().month}/${picked.toLocal().year}";
+        _dateController.text = date;
       });
+  }
+
+  void _saveForm() {
+    _form.currentState.save();
+    var _finalForm = Event(
+      eid: '',
+      description: _editedEvent.description,
+      title: _editedEvent.title,
+      batch: _editedEvent.batch,
+      branch: _editedEvent.branch,
+      eventDate: _editedEvent.eventDate,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    var parsedDate = DateFormat('dd MMM yy').format(selectedDate);
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Event'),
@@ -50,87 +89,129 @@ class _EditEventScreenState extends State<EditEventScreen> {
       body: Padding(
         padding: EdgeInsets.all(15),
         child: Form(
+            key: _form,
             child: ListView(
-          children: [
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Title'),
-              textInputAction: TextInputAction.next,
-            ),
-            TextFormField(
-              decoration: InputDecoration(labelText: 'Description'),
-              maxLines: 3,
-              keyboardType: TextInputType.multiline,
-            ),
-            Container(
-              margin: EdgeInsets.all(20),
-              height: 50,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  DropdownButton<String>(
-                    icon: Icon(Icons.arrow_drop_down_outlined),
-                    hint: Text('Select Branch'),
-                    value: _currentSelectedBranch,
-                    isDense: true,
-                    onChanged: (String newValue) {
-                      setState(() {
-                        _currentSelectedBranch = newValue;
-                      });
-                    },
-                    items: _branches.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+              children: [
+                TextFormField(
+                  onSaved: (value) {
+                    _editedEvent.title = value;
+                  },
+                  decoration: InputDecoration(
+                    labelText: 'Event Title',
+                    icon: Icon(Icons.title_rounded),
                   ),
-                  DropdownButton<String>(
-                    icon: Icon(Icons.arrow_drop_down_outlined),
-                    hint: Text('Select Batch'),
-                    value: _currentSelectedBatch,
-                    isDense: true,
-                    onChanged: (String newValue) {
-                      setState(() {
-                        _currentSelectedBatch = newValue;
-                      });
-                    },
-                    items: _batches.map((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(vertical: 10),
-              height: 100,
-              child: InkWell(
-                onTap: () {
-                  _selectDate(context);
-                },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Tap here to set date :'),
-                        Icon(Icons.calendar_today),
-                      ],
-                    ),
-                    Text(
-                      'The date selected is : $parsedDate',
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
                 ),
-              ),
-            )
-          ],
-        )),
+                TextFormField(
+                  onSaved: (value) {
+                    _editedEvent.description = value;
+                  },
+                  maxLines: 3,
+                  keyboardType: TextInputType.multiline,
+                  decoration: InputDecoration(
+                    labelText: 'Event Description',
+                    icon: Icon(Icons.description_rounded),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: GestureDetector(
+                    onTap: () => _selectDate(context),
+                    child: AbsorbPointer(
+                      child: TextFormField(
+                        onSaved: (val) {
+                          _editedEvent.eventDate = selectedDate;
+                        },
+                        controller: _dateController,
+                        keyboardType: TextInputType.datetime,
+                        decoration: InputDecoration(
+                          labelText: "Date",
+                          icon: Icon(Icons.calendar_today),
+                        ),
+                        validator: (value) {
+                          if (value.isEmpty)
+                            return "Please enter a date for your task";
+                          return null;
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: DropdownButtonFormField<String>(
+                    onSaved: (val) => _editedEvent.branch = val,
+                    value: currentSelectedBranch,
+                    items: _branches.map<DropdownMenuItem<String>>(
+                      (String val) {
+                        return DropdownMenuItem(
+                          child: Text(val),
+                          value: val,
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        currentSelectedBranch = val;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Select Branch',
+                      icon: Icon(Icons.person),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10),
+                  child: DropdownButtonFormField<String>(
+                    onSaved: (val) => _editedEvent.batch = val,
+                    value: currentSelectedBatch,
+                    items: _batches.map<DropdownMenuItem<String>>(
+                      (String val) {
+                        return DropdownMenuItem(
+                          child: Text(val),
+                          value: val,
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        currentSelectedBatch = val;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Select Batch',
+                      icon: Icon(Icons.group_rounded),
+                    ),
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(vertical: 100),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Transform.scale(
+                        scale: 2,
+                        child: IconButton(
+                          color: Colors.green,
+                          onPressed: () {
+                            _saveForm();
+                          },
+                          icon: Icon(Icons.save_rounded),
+                        ),
+                      ),
+                      Transform.scale(
+                        scale: 2,
+                        child: IconButton(
+                          color: Colors.red,
+                          onPressed: () {},
+                          icon: Icon(Icons.cancel_outlined),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )),
       ),
     );
   }
