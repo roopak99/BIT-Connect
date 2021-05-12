@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
@@ -128,17 +130,34 @@ class Events with ChangeNotifier {
     ),
   ];
 
-  void addEvent(Event event) {
-    final newEvent = Event(
-      title: event.title,
-      batch: event.batch,
-      branch: event.branch,
-      description: event.description,
-      eventDate: event.eventDate,
-      eid: DateTime.now().toString(),
-    );
-    _events.insert(0, newEvent);
-    notifyListeners();
+  Future<void> addEvent(Event event) async {
+    var url = Uri.parse(
+        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json');
+    try {
+      final response = await http.post(
+        url,
+        body: jsonEncode({
+          'title': event.title,
+          'description': event.description,
+          'date': event.eventDate.toString(),
+          'branch': event.branch,
+          'batch': event.batch,
+        }),
+      );
+      final newEvent = Event(
+        title: event.title,
+        batch: event.batch,
+        branch: event.branch,
+        description: event.description,
+        eventDate: event.eventDate,
+        eid: jsonDecode(response.body)['name'],
+      );
+      _events.insert(0, newEvent);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 
   void updateEvent(String eid, Event newEvent) {

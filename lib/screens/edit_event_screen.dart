@@ -53,6 +53,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
   String currentSelectedBatch;
   final _form = GlobalKey<FormState>();
   var _editedEvent = EditedEvent();
+  var _isLoading = false;
 
   DateTime selectedDate = DateTime.now();
 
@@ -108,11 +109,15 @@ class _EditEventScreenState extends State<EditEventScreen> {
     super.didChangeDependencies();
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
     if (!isValid) {
       return;
     }
+    setState(() {
+      _isLoading = true;
+    });
+
     _form.currentState.save();
 
     if (_editedEvent.eid != null) {
@@ -136,10 +141,30 @@ class _EditEventScreenState extends State<EditEventScreen> {
         branch: _editedEvent.branch,
         eventDate: _editedEvent.eventDate,
       );
-      Provider.of<Events>(context, listen: false).addEvent(_finalForm);
+      try {
+        await Provider.of<Events>(context, listen: false).addEvent(_finalForm);
+      } catch (error) {
+        await showDialog<Null>(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Error'),
+            content: Text('Something went wrong'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Okay'))
+            ],
+          ),
+        );
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).pop();
+      }
     }
-
-    Navigator.of(context).pop();
   }
 
   @override
@@ -148,150 +173,154 @@ class _EditEventScreenState extends State<EditEventScreen> {
       appBar: AppBar(
         title: Text('Edit Event'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(15),
-        child: Form(
-            key: _form,
-            child: ListView(
-              children: [
-                TextFormField(
-                  initialValue: _initValues['title'],
-                  validator: (value) {
-                    if (value.isEmpty) return "Event title is Compulsory";
-                    if (value.length > 40)
-                      return "Maximum limit of characters exceeded (40)";
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _editedEvent.title = value;
-                  },
-                  textInputAction: TextInputAction.next,
-                  decoration: InputDecoration(
-                    labelText: 'Event Title',
-                    icon: Icon(Icons.title_rounded),
-                  ),
-                ),
-                TextFormField(
-                  initialValue: _initValues['description'],
-                  onSaved: (value) {
-                    _editedEvent.description = value;
-                  },
-                  maxLines: 3,
-                  keyboardType: TextInputType.multiline,
-                  decoration: InputDecoration(
-                    labelText: 'Event Description',
-                    icon: Icon(Icons.description_rounded),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: GestureDetector(
-                    onTap: () => _selectDate(context),
-                    child: AbsorbPointer(
-                      child: TextFormField(
-                        onSaved: (val) {
-                          _editedEvent.eventDate = selectedDate;
-                        },
-                        controller: _dateController,
-                        keyboardType: TextInputType.datetime,
-                        decoration: InputDecoration(
-                          labelText: "Event Date",
-                          icon: Icon(Icons.calendar_today),
-                        ),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: EdgeInsets.all(15),
+              child: Form(
+                  key: _form,
+                  child: ListView(
+                    children: [
+                      TextFormField(
+                        initialValue: _initValues['title'],
                         validator: (value) {
-                          if (value.isEmpty)
-                            return "Please enter a date for your event";
+                          if (value.isEmpty) return "Event title is Compulsory";
+                          if (value.length > 40)
+                            return "Maximum limit of characters exceeded (40)";
                           return null;
                         },
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: DropdownButtonFormField<String>(
-                    validator: (value) {
-                      if (value.isEmpty) return "Branch must be selected";
-                      return null;
-                    },
-                    onSaved: (val) => _editedEvent.branch = val,
-                    value: currentSelectedBranch,
-                    items: _branches.map<DropdownMenuItem<String>>(
-                      (String val) {
-                        return DropdownMenuItem(
-                          child: Text(val),
-                          value: val,
-                        );
-                      },
-                    ).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        currentSelectedBranch = val;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Select Branch',
-                      icon: Icon(Icons.person),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10),
-                  child: DropdownButtonFormField<String>(
-                    validator: (value) {
-                      if (value.isEmpty) return "Batch must be selected";
-                      return null;
-                    },
-                    onSaved: (val) => _editedEvent.batch = val,
-                    value: currentSelectedBatch,
-                    items: _batches.map<DropdownMenuItem<String>>(
-                      (String val) {
-                        return DropdownMenuItem(
-                          child: Text(val),
-                          value: val,
-                        );
-                      },
-                    ).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        currentSelectedBatch = val;
-                      });
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Select Batch',
-                      icon: Icon(Icons.group_rounded),
-                    ),
-                  ),
-                ),
-                Container(
-                  margin: EdgeInsets.symmetric(vertical: 100),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      Transform.scale(
-                        scale: 2,
-                        child: IconButton(
-                          color: Colors.green,
-                          onPressed: () {
-                            _saveForm();
-                          },
-                          icon: Icon(Icons.save_rounded),
+                        onSaved: (value) {
+                          _editedEvent.title = value;
+                        },
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          labelText: 'Event Title',
+                          icon: Icon(Icons.title_rounded),
                         ),
                       ),
-                      Transform.scale(
-                        scale: 2,
-                        child: IconButton(
-                          color: Colors.red,
-                          onPressed: () {},
-                          icon: Icon(Icons.cancel_outlined),
+                      TextFormField(
+                        initialValue: _initValues['description'],
+                        onSaved: (value) {
+                          _editedEvent.description = value;
+                        },
+                        maxLines: 3,
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          labelText: 'Event Description',
+                          icon: Icon(Icons.description_rounded),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: GestureDetector(
+                          onTap: () => _selectDate(context),
+                          child: AbsorbPointer(
+                            child: TextFormField(
+                              onSaved: (val) {
+                                _editedEvent.eventDate = selectedDate;
+                              },
+                              controller: _dateController,
+                              keyboardType: TextInputType.datetime,
+                              decoration: InputDecoration(
+                                labelText: "Event Date",
+                                icon: Icon(Icons.calendar_today),
+                              ),
+                              validator: (value) {
+                                if (value.isEmpty)
+                                  return "Please enter a date for your event";
+                                return null;
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: DropdownButtonFormField<String>(
+                          validator: (value) {
+                            if (value.isEmpty) return "Branch must be selected";
+                            return null;
+                          },
+                          onSaved: (val) => _editedEvent.branch = val,
+                          value: currentSelectedBranch,
+                          items: _branches.map<DropdownMenuItem<String>>(
+                            (String val) {
+                              return DropdownMenuItem(
+                                child: Text(val),
+                                value: val,
+                              );
+                            },
+                          ).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              currentSelectedBranch = val;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Select Branch',
+                            icon: Icon(Icons.person),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: DropdownButtonFormField<String>(
+                          validator: (value) {
+                            if (value.isEmpty) return "Batch must be selected";
+                            return null;
+                          },
+                          onSaved: (val) => _editedEvent.batch = val,
+                          value: currentSelectedBatch,
+                          items: _batches.map<DropdownMenuItem<String>>(
+                            (String val) {
+                              return DropdownMenuItem(
+                                child: Text(val),
+                                value: val,
+                              );
+                            },
+                          ).toList(),
+                          onChanged: (val) {
+                            setState(() {
+                              currentSelectedBatch = val;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Select Batch',
+                            icon: Icon(Icons.group_rounded),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(vertical: 100),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Transform.scale(
+                              scale: 2,
+                              child: IconButton(
+                                color: Colors.green,
+                                onPressed: () {
+                                  _saveForm();
+                                },
+                                icon: Icon(Icons.save_rounded),
+                              ),
+                            ),
+                            Transform.scale(
+                              scale: 2,
+                              child: IconButton(
+                                color: Colors.red,
+                                onPressed: () {},
+                                icon: Icon(Icons.cancel_outlined),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ],
-            )),
-      ),
+                  )),
+            ),
     );
   }
 }
