@@ -27,7 +27,8 @@ class UserEvents extends StatelessWidget {
           padding: EdgeInsets.all(8),
           child: ListView.builder(
             itemCount: eventsData.events.length,
-            itemBuilder: (_, i) => UserEventItem(eventsData.events[i].title),
+            itemBuilder: (_, i) => UserEventItem(
+                eventsData.events[i].eid, eventsData.events[i].title),
           ),
         ));
   }

@@ -128,6 +128,34 @@ class Events with ChangeNotifier {
     ),
   ];
 
+  void addEvent(Event event) {
+    final newEvent = Event(
+      title: event.title,
+      batch: event.batch,
+      branch: event.branch,
+      description: event.description,
+      eventDate: event.eventDate,
+      eid: DateTime.now().toString(),
+    );
+    _events.insert(0, newEvent);
+    notifyListeners();
+  }
+
+  void updateEvent(String eid, Event newEvent) {
+    final eventIndex = _events.indexWhere((event) => event.eid == eid);
+    if (eventIndex >= 0) {
+      _events[eventIndex] = newEvent;
+      notifyListeners();
+    } else {
+      print('cannot update');
+    }
+  }
+
+  void deleteEvent(String eid) {
+    _events.removeWhere((event) => event.eid == eid);
+    notifyListeners();
+  }
+
   List<Event> get events {
     return [..._events];
   }

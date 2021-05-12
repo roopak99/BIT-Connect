@@ -1,5 +1,8 @@
 import 'package:bit_connect/models/event.dart';
+import 'package:bit_connect/providers/events.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
 
 class EditedEvent {
   String eid;
@@ -68,16 +71,75 @@ class _EditEventScreenState extends State<EditEventScreen> {
       });
   }
 
+  var _isInit = true;
+
+  var _initValues = {
+    'title': '',
+    'description': '',
+    'date': '',
+  };
+
+  @override
+  void didChangeDependencies() {
+    if (_isInit) {
+      final eventId = ModalRoute.of(context).settings.arguments as String;
+      if (eventId != null) {
+        final _rcvdEvent =
+            Provider.of<Events>(context, listen: false).findById(eventId);
+
+        _editedEvent.batch = _rcvdEvent.batch;
+        _editedEvent.eid = _rcvdEvent.eid;
+        _editedEvent.title = _rcvdEvent.title;
+        _editedEvent.branch = _rcvdEvent.branch;
+        _editedEvent.description = _rcvdEvent.description;
+        _editedEvent.eventDate = _rcvdEvent.eventDate;
+
+        _initValues = {
+          'title': _editedEvent.title,
+          'description': _editedEvent.description,
+          'date': '',
+        };
+        _dateController.text =
+            DateFormat('dd/MM/yyyy').format(_editedEvent.eventDate);
+      }
+    }
+
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   void _saveForm() {
+    final isValid = _form.currentState.validate();
+    if (!isValid) {
+      return;
+    }
     _form.currentState.save();
-    var _finalForm = Event(
-      eid: '',
-      description: _editedEvent.description,
-      title: _editedEvent.title,
-      batch: _editedEvent.batch,
-      branch: _editedEvent.branch,
-      eventDate: _editedEvent.eventDate,
-    );
+
+    if (_editedEvent.eid != null) {
+      var _finalForm = Event(
+        eid: _editedEvent.eid,
+        description: _editedEvent.description,
+        title: _editedEvent.title,
+        batch: _editedEvent.batch,
+        branch: _editedEvent.branch,
+        eventDate: _editedEvent.eventDate,
+      );
+
+      Provider.of<Events>(context, listen: false)
+          .updateEvent(_finalForm.eid, _finalForm);
+    } else {
+      var _finalForm = Event(
+        eid: '',
+        description: _editedEvent.description,
+        title: _editedEvent.title,
+        batch: _editedEvent.batch,
+        branch: _editedEvent.branch,
+        eventDate: _editedEvent.eventDate,
+      );
+      Provider.of<Events>(context, listen: false).addEvent(_finalForm);
+    }
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -93,15 +155,24 @@ class _EditEventScreenState extends State<EditEventScreen> {
             child: ListView(
               children: [
                 TextFormField(
+                  initialValue: _initValues['title'],
+                  validator: (value) {
+                    if (value.isEmpty) return "Event title is Compulsory";
+                    if (value.length > 40)
+                      return "Maximum limit of characters exceeded (40)";
+                    return null;
+                  },
                   onSaved: (value) {
                     _editedEvent.title = value;
                   },
+                  textInputAction: TextInputAction.next,
                   decoration: InputDecoration(
                     labelText: 'Event Title',
                     icon: Icon(Icons.title_rounded),
                   ),
                 ),
                 TextFormField(
+                  initialValue: _initValues['description'],
                   onSaved: (value) {
                     _editedEvent.description = value;
                   },
@@ -124,12 +195,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
                         controller: _dateController,
                         keyboardType: TextInputType.datetime,
                         decoration: InputDecoration(
-                          labelText: "Date",
+                          labelText: "Event Date",
                           icon: Icon(Icons.calendar_today),
                         ),
                         validator: (value) {
                           if (value.isEmpty)
-                            return "Please enter a date for your task";
+                            return "Please enter a date for your event";
                           return null;
                         },
                       ),
@@ -139,6 +210,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: DropdownButtonFormField<String>(
+                    validator: (value) {
+                      if (value.isEmpty) return "Branch must be selected";
+                      return null;
+                    },
                     onSaved: (val) => _editedEvent.branch = val,
                     value: currentSelectedBranch,
                     items: _branches.map<DropdownMenuItem<String>>(
@@ -163,6 +238,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 10),
                   child: DropdownButtonFormField<String>(
+                    validator: (value) {
+                      if (value.isEmpty) return "Batch must be selected";
+                      return null;
+                    },
                     onSaved: (val) => _editedEvent.batch = val,
                     value: currentSelectedBatch,
                     items: _batches.map<DropdownMenuItem<String>>(
