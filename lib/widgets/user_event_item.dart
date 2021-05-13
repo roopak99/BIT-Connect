@@ -10,6 +10,7 @@ class UserEventItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final snackScaffold = Scaffold.of(context);
     return Card(
       elevation: 3,
       child: ListTile(
@@ -26,9 +27,18 @@ class UserEventItem extends StatelessWidget {
                   }),
               IconButton(
                   icon: Icon(Icons.delete),
-                  onPressed: () {
-                    Provider.of<Events>(context, listen: false)
-                        .deleteEvent(eid);
+                  onPressed: () async {
+                    try {
+                      await Provider.of<Events>(context, listen: false)
+                          .deleteEvent(eid);
+                    } catch (error) {
+                      // ignore: deprecated_member_use
+                      snackScaffold.showSnackBar(SnackBar(
+                          content: Text(
+                        'Deletion Failed',
+                        textAlign: TextAlign.center,
+                      )));
+                    }
                   }),
             ],
           ),

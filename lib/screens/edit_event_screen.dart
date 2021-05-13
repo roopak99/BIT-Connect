@@ -130,8 +130,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
         eventDate: _editedEvent.eventDate,
       );
 
-      Provider.of<Events>(context, listen: false)
+      await Provider.of<Events>(context, listen: false)
           .updateEvent(_finalForm.eid, _finalForm);
+      setState(() {
+        _isLoading = false;
+      });
+      Navigator.of(context).pop();
     } else {
       var _finalForm = Event(
         eid: '',

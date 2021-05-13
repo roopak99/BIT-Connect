@@ -7,6 +7,11 @@ import '../providers/events.dart';
 
 class UserEvents extends StatelessWidget {
   static const routeName = '/user-events';
+
+  Future<void> _refreshEvents(BuildContext context) async {
+    await Provider.of<Events>(context, listen: false).fetchAndSetEvents();
+  }
+
   @override
   Widget build(BuildContext context) {
     final eventsData = Provider.of<Events>(context);
@@ -23,12 +28,17 @@ class UserEvents extends StatelessWidget {
             )
           ],
         ),
-        body: Padding(
-          padding: EdgeInsets.all(8),
-          child: ListView.builder(
-            itemCount: eventsData.events.length,
-            itemBuilder: (_, i) => UserEventItem(
-                eventsData.events[i].eid, eventsData.events[i].title),
+        body: RefreshIndicator(
+          onRefresh: () {
+            return _refreshEvents(context);
+          },
+          child: Padding(
+            padding: EdgeInsets.all(8),
+            child: ListView.builder(
+              itemCount: eventsData.events.length,
+              itemBuilder: (_, i) => UserEventItem(
+                  eventsData.events[i].eid, eventsData.events[i].title),
+            ),
           ),
         ));
   }

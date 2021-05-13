@@ -1,3 +1,4 @@
+import 'package:bit_connect/models/http_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -7,128 +8,32 @@ import 'package:flutter/foundation.dart';
 import '../models/event.dart';
 
 class Events with ChangeNotifier {
-  List<Event> _events = [
-    Event(
-      eid: 'e1',
-      title: 'event 1',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 15),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e2',
-      title: 'event 2',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 16),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e3',
-      title: 'event 3',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 17),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e4',
-      title: 'event 4',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 18),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e5',
-      title: 'event 5',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 19),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e1',
-      title: 'event 1',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 15),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e2',
-      title: 'event 2',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 16),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e3',
-      title: 'event 3',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 17),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e4',
-      title: 'event 4',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 18),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e5',
-      title: 'event 5',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 19),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e1',
-      title: 'event 1',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 15),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e2',
-      title: 'event 2',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 16),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e3',
-      title: 'event 3',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 17),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e4',
-      title: 'event 4',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 18),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-    Event(
-      eid: 'e5',
-      title: 'event 5',
-      description: 'this is product description',
-      eventDate: DateTime.utc(2021, 5, 19),
-      branch: 'cse',
-      batch: '2018-22',
-    ),
-  ];
+  List<Event> _events = [];
+
+  Future<void> fetchAndSetEvents() async {
+    var url = Uri.parse(
+        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json');
+    try {
+      final response = await http.get(url);
+      final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
+      final List<Event> loadedEvents = [];
+      extractedData.forEach((eventId, eventData) {
+        loadedEvents.insert(
+            0,
+            Event(
+                eid: eventId,
+                title: eventData['title'],
+                description: eventData['description'],
+                batch: eventData['batch'],
+                branch: eventData['branch'],
+                eventDate: DateTime.parse(eventData['date'])));
+      });
+      _events = loadedEvents;
+      notifyListeners();
+    } catch (error) {
+      throw (error);
+    }
+  }
 
   Future<void> addEvent(Event event) async {
     var url = Uri.parse(
@@ -160,9 +65,21 @@ class Events with ChangeNotifier {
     }
   }
 
-  void updateEvent(String eid, Event newEvent) {
+  Future<void> updateEvent(String eid, Event newEvent) async {
     final eventIndex = _events.indexWhere((event) => event.eid == eid);
+
     if (eventIndex >= 0) {
+      var url = Uri.parse(
+          'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events/$eid.json');
+      await http.patch(url,
+          body: jsonEncode({
+            'title': newEvent.title,
+            'description': newEvent.description,
+            'date': newEvent.eventDate.toString(),
+            'batch': newEvent.batch,
+            'branch': newEvent.branch,
+          }));
+
       _events[eventIndex] = newEvent;
       notifyListeners();
     } else {
@@ -170,9 +87,22 @@ class Events with ChangeNotifier {
     }
   }
 
-  void deleteEvent(String eid) {
-    _events.removeWhere((event) => event.eid == eid);
+  Future<void> deleteEvent(String eid) async {
+    var url = Uri.parse(
+        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events/$eid.json');
+    final existingEventIndex = _events.indexWhere((event) => event.eid == eid);
+    var existingEvent = _events[existingEventIndex];
+    _events.removeAt(existingEventIndex);
     notifyListeners();
+    final response = await http.delete(url);
+
+    if (response.statusCode >= 400) {
+      _events.insert(existingEventIndex, existingEvent);
+      notifyListeners();
+      throw HttpException('Could not delete');
+    }
+
+    existingEvent = null;
   }
 
   List<Event> get events {
