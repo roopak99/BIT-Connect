@@ -12,7 +12,7 @@ class Events with ChangeNotifier {
 
   Future<void> fetchAndSetEvents() async {
     var url = Uri.parse(
-        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json');
+        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json?auth=$authToken');
     try {
       final response = await http.get(url);
       final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
@@ -37,7 +37,7 @@ class Events with ChangeNotifier {
 
   Future<void> addEvent(Event event) async {
     var url = Uri.parse(
-        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json');
+        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json?auth=$authToken');
     try {
       final response = await http.post(
         url,
@@ -70,7 +70,7 @@ class Events with ChangeNotifier {
 
     if (eventIndex >= 0) {
       var url = Uri.parse(
-          'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events/$eid.json');
+          'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events/$eid.json?auth=$authToken');
       await http.patch(url,
           body: jsonEncode({
             'title': newEvent.title,
@@ -89,7 +89,7 @@ class Events with ChangeNotifier {
 
   Future<void> deleteEvent(String eid) async {
     var url = Uri.parse(
-        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events/$eid.json');
+        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events/$eid.json?auth=$authToken');
     final existingEventIndex = _events.indexWhere((event) => event.eid == eid);
     var existingEvent = _events[existingEventIndex];
     _events.removeAt(existingEventIndex);
@@ -104,6 +104,9 @@ class Events with ChangeNotifier {
 
     existingEvent = null;
   }
+
+  final String authToken;
+  Events(this.authToken, this._events);
 
   List<Event> get events {
     return [..._events];

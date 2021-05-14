@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../providers/events.dart';
 
 class EventsOverviewScreen extends StatefulWidget {
-  static const routeName = '/';
+  static const routeName = '/events-overview';
 
   @override
   _EventsOverviewScreenState createState() => _EventsOverviewScreenState();
