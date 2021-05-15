@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         ],
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
-            // debugShowCheckedModeBanner: false,
+            debugShowCheckedModeBanner: false,
             title: 'BIT Connect',
             theme: ThemeData(
               primarySwatch: Colors.blue,
