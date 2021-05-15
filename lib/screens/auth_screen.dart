@@ -60,7 +60,10 @@ class AuthScreen extends StatelessWidget {
                   //     child: Text(
                   //       'BIT Connect',
                   //       style: TextStyle(
+                  //         color: Theme.of(context).accentTextTheme.title.color,
                   //         fontSize: 50,
+                  //         fontFamily: 'Anton',
+                  //         fontWeight: FontWeight.normal,
                   //       ),
                   //     ),
                   //   ),
@@ -100,27 +103,28 @@ class _AuthCardState extends State<AuthCard> {
 
   void _showErrorDialog(String message) {
     showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('An error occured'),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: Text('Okay'),
-          ),
-        ],
-      ),
-    );
+        context: context,
+        builder: (context) => AlertDialog(
+              title: Text('Error Occured'),
+              content: Text(message),
+              actions: [
+                // ignore: deprecated_member_use
+                FlatButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Okay'),
+                ),
+              ],
+            ));
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState.validate()) {
-      // Invalid!
-      return;
-    }
+    print('submit runs');
+    // if (!_formKey.currentState.validate()) {
+    //   // Invalid!
+    //   return;
+    // }
     _formKey.currentState.save();
     setState(() {
       _isLoading = true;
@@ -129,31 +133,31 @@ class _AuthCardState extends State<AuthCard> {
     try {
       if (_authMode == AuthMode.Login) {
         // Log user in
-        await Provider.of<Auth>(context, listen: false).login(
-          _authData['email'],
-          _authData['password'],
-        );
+        print('login called');
+        await Provider.of<Auth>(context, listen: false)
+            .login(_authData['email'], _authData['password']);
       } else {
         // Sign user up
-        await Provider.of<Auth>(context, listen: false).signup(
-          _authData['email'],
-          _authData['password'],
-        );
+        print('signup called');
+        await Provider.of<Auth>(context, listen: false)
+            .signup(_authData['email'], _authData['password']);
       }
     } on HttpException catch (error) {
-      var errorMessage = 'Authentication Failed';
+      var errorMessage = "Authentication failed";
       if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email already exists';
+        errorMessage = "Email already exists";
       } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This email is not valid';
+        errorMessage = "Email not valid";
       } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak';
+        errorMessage = "Weak Password";
       } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'This email is not found';
+        errorMessage = "EMAIL_NOT_FOUND";
+      } else if (error.toString().contains('INVALID_PASSWORD')) {
+        errorMessage = "INVALID_PASSWORD";
       }
       _showErrorDialog(errorMessage);
     } catch (error) {
-      const errorMessage = 'Could not authenticate. Please try again later';
+      const errorMessage = "Could not authenticate";
       _showErrorDialog(errorMessage);
     }
 
@@ -211,7 +215,7 @@ class _AuthCardState extends State<AuthCard> {
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
-                    if (value.isEmpty || value.length < 5) {
+                    if (value.isEmpty || value.length < 4) {
                       return 'Password is too short!';
                     }
                     return '';

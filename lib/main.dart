@@ -6,7 +6,7 @@ import 'package:bit_connect/screens/user_events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import './screens/edit_event_screen.dart';
-import './screens/4.1 auth_screen.dart';
+import './screens/auth_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,13 +22,20 @@ class MyApp extends StatelessWidget {
             value: Auth(),
           ),
           ChangeNotifierProxyProvider<Auth, Events>(
-            update: (ctx, auth, previousEvents) =>
-                Events(auth.token, previousEvents.events),
-            create: (_) => Events('', []),
+            create: (ctx) => Events(
+              '_',
+              '_',
+              [],
+            ),
+            update: (ctx, auth, previousEvents) => Events(
+              auth.token,
+              auth.userId,
+              previousEvents == null ? [] : previousEvents.events,
+            ),
           ),
         ],
         child: Consumer<Auth>(
-          builder: (context, auth, _) => MaterialApp(
+          builder: (ctx, auth, _) => MaterialApp(
             title: 'BIT Connect',
             theme: ThemeData(
               primarySwatch: Colors.blue,

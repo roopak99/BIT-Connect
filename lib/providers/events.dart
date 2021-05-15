@@ -9,10 +9,23 @@ import '../models/event.dart';
 
 class Events with ChangeNotifier {
   List<Event> _events = [];
+  String authToken;
+  String userId;
+  Events(this.authToken, this.userId, this._events);
 
-  Future<void> fetchAndSetEvents() async {
+  List<Event> get events {
+    return [..._events];
+  }
+
+  Event findById(String id) {
+    return _events.firstWhere((event) => event.eid == id);
+  }
+
+  Future<void> fetchAndSetEvents([bool filterByUser = false]) async {
+    var filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
     var url = Uri.parse(
-        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json?auth=$authToken');
+        'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json?auth=$authToken&$filterString');
     try {
       final response = await http.get(url);
       final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
@@ -47,6 +60,7 @@ class Events with ChangeNotifier {
           'date': event.eventDate.toString(),
           'branch': event.branch,
           'batch': event.batch,
+          'creatorId': userId,
         }),
       );
       final newEvent = Event(
@@ -103,16 +117,5 @@ class Events with ChangeNotifier {
     }
 
     existingEvent = null;
-  }
-
-  final String authToken;
-  Events(this.authToken, this._events);
-
-  List<Event> get events {
-    return [..._events];
-  }
-
-  Event findById(String id) {
-    return _events.firstWhere((event) => event.eid == id);
   }
 }

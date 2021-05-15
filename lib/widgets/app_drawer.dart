@@ -1,5 +1,7 @@
+import 'package:bit_connect/providers/auth.dart';
 import 'package:bit_connect/screens/user_events_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -25,6 +27,16 @@ class AppDrawer extends StatelessWidget {
             title: Text("Your Events"),
             onTap: () {
               Navigator.of(context).pushReplacementNamed(UserEvents.routeName);
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.exit_to_app_rounded),
+            title: Text("Logout"),
+            onTap: () {
+              // Navigator.of(context).pushReplacementNamed(UserEvents.routeName);
+              Navigator.of(context).pop();
+              Provider.of<Auth>(context, listen: false).logout();
             },
           )
         ],
