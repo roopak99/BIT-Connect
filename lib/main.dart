@@ -2,6 +2,7 @@ import 'package:bit_connect/providers/auth.dart';
 import 'package:bit_connect/providers/events.dart';
 import 'package:bit_connect/screens/event_detail_screen.dart';
 import 'package:bit_connect/screens/events_overview_screen.dart';
+import 'package:bit_connect/screens/splash_screen.dart';
 import 'package:bit_connect/screens/user_events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,11 +37,21 @@ class MyApp extends StatelessWidget {
         ],
         child: Consumer<Auth>(
           builder: (ctx, auth, _) => MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'BIT Connect',
             theme: ThemeData(
               primarySwatch: Colors.blue,
             ),
-            home: auth.isAuth ? EventsOverviewScreen() : AuthScreen(),
+            home: auth.isAuth
+                ? EventsOverviewScreen()
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (ctx, authResultSnapshot) =>
+                        authResultSnapshot.connectionState ==
+                                ConnectionState.waiting
+                            ? SplashScreen()
+                            : AuthScreen(),
+                  ),
             routes: {
               EventsOverviewScreen.routeName: (context) =>
                   EventsOverviewScreen(),
