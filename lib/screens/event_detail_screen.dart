@@ -15,8 +15,6 @@ class EventDetail extends StatelessWidget {
           centerTitle: true,
           title: Text(loadedEvent.title),
         ),
-        body: Container(
-          child: Text(loadedEvent.description),
-        ));
+        body: Text('hi'));
   }
 }

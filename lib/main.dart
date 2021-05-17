@@ -10,7 +10,7 @@ import './screens/edit_event_screen.dart';
 import './screens/auth_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(new MyApp());
 }
 
 class MyApp extends StatelessWidget {

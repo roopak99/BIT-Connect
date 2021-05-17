@@ -24,12 +24,14 @@ class Events with ChangeNotifier {
   Future<void> fetchAndSetEvents([bool filterByUser = false]) async {
     var filterString =
         filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+
     var url = Uri.parse(
         'https://bit-connect-ecc06-default-rtdb.asia-southeast1.firebasedatabase.app/events.json?auth=$authToken&$filterString');
     try {
       final response = await http.get(url);
       final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
       final List<Event> loadedEvents = [];
+
       extractedData.forEach((eventId, eventData) {
         loadedEvents.insert(
             0,
@@ -74,7 +76,6 @@ class Events with ChangeNotifier {
       _events.insert(0, newEvent);
       notifyListeners();
     } catch (error) {
-      print(error);
       throw error;
     }
   }
@@ -96,9 +97,7 @@ class Events with ChangeNotifier {
 
       _events[eventIndex] = newEvent;
       notifyListeners();
-    } else {
-      print('cannot update');
-    }
+    } else {}
   }
 
   Future<void> deleteEvent(String eid) async {

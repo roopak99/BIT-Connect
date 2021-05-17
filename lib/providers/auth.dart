@@ -34,7 +34,6 @@ class Auth with ChangeNotifier {
     var url = Uri.parse(
         'https://identitytoolkit.googleapis.com/v1/accounts:$urlSegment?key=AIzaSyB6Y6wHKvMxEQcWX5ib-HyZ82WwJlG5Vc8');
     try {
-      print('response sent');
       final response = await http.post(
         url,
         body: jsonEncode({
@@ -92,7 +91,7 @@ class Auth with ChangeNotifier {
       return false;
     }
     _token = extractedUserData['token'];
-    _userId = extractedUserData['userID'];
+    _userId = extractedUserData['userId'];
     _expiryDate = expiryDate;
 
     notifyListeners();
