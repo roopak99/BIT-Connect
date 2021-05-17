@@ -34,6 +34,8 @@ class _EventsOverviewScreenState extends State<EventsOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var noEvents = Provider.of<Events>(context, listen: false).events.length;
+
     return Scaffold(
       drawer: AppDrawer(),
       appBar: AppBar(
@@ -44,7 +46,11 @@ class _EventsOverviewScreenState extends State<EventsOverviewScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : EventsList(),
+          : (noEvents <= 0
+              ? Center(
+                  child: Text('No events to show'),
+                )
+              : EventsList()),
     );
   }
 }

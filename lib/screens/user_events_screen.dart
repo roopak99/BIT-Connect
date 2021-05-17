@@ -29,27 +29,32 @@ class UserEvents extends StatelessWidget {
         ),
         body: FutureBuilder(
           future: _refreshEvents(context),
-          builder: (ctx, snapshot) =>
-              snapshot.connectionState == ConnectionState.waiting
-                  ? Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : RefreshIndicator(
-                      onRefresh: () {
-                        return _refreshEvents(context);
-                      },
-                      child: Consumer<Events>(
-                        builder: (context, eventsData, _) => Padding(
-                          padding: EdgeInsets.all(8),
-                          child: ListView.builder(
-                            itemCount: eventsData.events.length,
-                            itemBuilder: (_, i) => UserEventItem(
-                                eventsData.events[i].eid,
-                                eventsData.events[i].title),
-                          ),
-                        ),
-                      ),
+          builder: (ctx, snapshot) => snapshot.connectionState ==
+                  ConnectionState.waiting
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : RefreshIndicator(
+                  onRefresh: () {
+                    return _refreshEvents(context);
+                  },
+                  child: Consumer<Events>(
+                    builder: (context, eventsData, _) => Padding(
+                      padding: EdgeInsets.all(8),
+                      child: eventsData.events.length <= 0
+                          ? Center(
+                              child:
+                                  Text('There are no events in your account'),
+                            )
+                          : ListView.builder(
+                              itemCount: eventsData.events.length,
+                              itemBuilder: (_, i) => UserEventItem(
+                                  eventsData.events[i].eid,
+                                  eventsData.events[i].title),
+                            ),
                     ),
+                  ),
+                ),
         ));
   }
 }

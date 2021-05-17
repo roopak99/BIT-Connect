@@ -11,10 +11,20 @@ class EventDetail extends StatelessWidget {
         Provider.of<Events>(context, listen: false).findById(eventId);
 
     return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(loadedEvent.title),
-        ),
-        body: Text('hi'));
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(loadedEvent.title),
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(child: Text(loadedEvent.title)),
+          Center(child: Text(loadedEvent.description)),
+          Center(child: Text(loadedEvent.branch)),
+          Center(child: Text(loadedEvent.batch)),
+          Center(child: Text(loadedEvent.eventDate.toIso8601String())),
+        ],
+      ),
+    );
   }
 }

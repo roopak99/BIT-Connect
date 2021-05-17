@@ -30,7 +30,12 @@ class Events with ChangeNotifier {
     try {
       final response = await http.get(url);
       final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
+
       final List<Event> loadedEvents = [];
+      if (extractedData == null) {
+        _events = [];
+        return;
+      }
 
       extractedData.forEach((eventId, eventData) {
         loadedEvents.insert(
