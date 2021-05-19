@@ -73,9 +73,9 @@ class _AuthCardState extends State<AuthCard> {
       } else if (error.toString().contains('WEAK_PASSWORD')) {
         errorMessage = "Weak Password";
       } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = "EMAIL_NOT_FOUND";
+        errorMessage = "Email not found. Sign up instead";
       } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = "INVALID_PASSWORD";
+        errorMessage = "Invalid username or password";
       }
       _showErrorDialog(errorMessage);
     } catch (error) {
@@ -109,9 +109,9 @@ class _AuthCardState extends State<AuthCard> {
       ),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.Signup ? 320 : 260,
+        height: _authMode == AuthMode.Signup ? 340 : 280,
         constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 340 : 280),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -119,6 +119,13 @@ class _AuthCardState extends State<AuthCard> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                Text(
+                  'Teacher\'s Login',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 TextFormField(
                   decoration: InputDecoration(labelText: 'E-Mail'),
                   keyboardType: TextInputType.emailAddress,
