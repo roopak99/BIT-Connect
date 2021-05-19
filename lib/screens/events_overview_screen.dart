@@ -40,7 +40,7 @@ class _EventsOverviewScreenState extends State<EventsOverviewScreen> {
       drawer: AppDrawer(),
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Events Overview Screen'),
+        title: Text('BIT Connect'),
       ),
       body: _isLoading
           ? Center(

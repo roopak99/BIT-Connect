@@ -315,7 +315,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                               scale: 2,
                               child: IconButton(
                                 color: Colors.red,
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
                                 icon: Icon(Icons.cancel_outlined),
                               ),
                             ),
