@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.bit_connect">
    <application
-        android:label="bit_connect"
+        android:label="BIT Connect"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"
@@ -37,5 +37,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-    </application>
+        </application>
+        <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>
