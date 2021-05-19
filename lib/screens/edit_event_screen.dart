@@ -99,6 +99,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
           'title': _editedEvent.title,
           'description': _editedEvent.description,
           'date': '',
+          'branch': _editedEvent.branch,
+          'batch': _editedEvent.batch
         };
         _dateController.text =
             DateFormat('dd/MM/yyyy').format(_editedEvent.eventDate);
@@ -248,7 +250,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                             return null;
                           },
                           onSaved: (val) => _editedEvent.branch = val,
-                          value: currentSelectedBranch,
+                          value: _initValues['branch'] != null
+                              ? _initValues['branch']
+                              : currentSelectedBranch,
                           items: _branches.map<DropdownMenuItem<String>>(
                             (String val) {
                               return DropdownMenuItem(
@@ -276,7 +280,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                             return null;
                           },
                           onSaved: (val) => _editedEvent.batch = val,
-                          value: currentSelectedBatch,
+                          value: _initValues['batch'] != null
+                              ? _initValues['batch']
+                              : currentSelectedBatch,
                           items: _batches.map<DropdownMenuItem<String>>(
                             (String val) {
                               return DropdownMenuItem(

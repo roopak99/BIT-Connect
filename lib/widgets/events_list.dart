@@ -15,6 +15,8 @@ class EventsList extends StatelessWidget {
         eid: loadedEvents[index].eid,
         title: loadedEvents[index].title,
         eventDate: loadedEvents[index].eventDate,
+        batch: loadedEvents[index].batch,
+        branch: loadedEvents[index].branch,
       ),
       itemCount: loadedEvents.length,
     );
