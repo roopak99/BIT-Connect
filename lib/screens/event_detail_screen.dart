@@ -1,5 +1,6 @@
 import 'package:bit_connect/providers/events.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 import 'package:provider/provider.dart';
 
@@ -117,6 +118,10 @@ class EventDetail extends StatelessWidget {
               ),
             ),
             Divider(),
+            SelectableLinkify(
+              onOpen: (link) => print("Clicked ${link.url}!"),
+              text: loadedEvent.description,
+            ),
           ],
         ),
       ),
