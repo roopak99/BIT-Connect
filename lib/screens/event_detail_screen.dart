@@ -1,6 +1,7 @@
 import 'package:bit_connect/providers/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:provider/provider.dart';
@@ -21,6 +22,12 @@ class EventDetail extends StatelessWidget {
     final eventId = ModalRoute.of(context).settings.arguments as String;
     final loadedEvent =
         Provider.of<Events>(context, listen: false).findById(eventId);
+
+    String timeleft =
+        loadedEvent.eventDate.difference(DateTime.now()).toString();
+
+    String timeleftmins = timeleft.substring(3, 5);
+    String timelefthrs = timeleft.substring(0, 2);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,8 +68,8 @@ class EventDetail extends StatelessWidget {
             SizedBox(
               height: 100,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8,
+                padding: const EdgeInsets.only(
+                  left: 7,
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -84,7 +91,7 @@ class EventDetail extends StatelessWidget {
                           children: [
                             Icon(Icons.people_rounded),
                             Padding(
-                              padding: const EdgeInsets.only(left: 10),
+                              padding: const EdgeInsets.only(left: 5),
                               child: Text(loadedEvent.branch),
                             ),
                           ],
@@ -92,18 +99,20 @@ class EventDetail extends StatelessWidget {
                       ],
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 20),
+                      padding: const EdgeInsets.only(left: 15),
                       child: VerticalDivider(),
                     ),
                     Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(left: 10),
+                          padding: const EdgeInsets.only(left: 15),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.calendar_today_rounded),
-                              Text('Event Date'),
+                              Text('Date'),
+                              Text(DateFormat('dd MMM yyyy')
+                                  .format(loadedEvent.eventDate)),
                             ],
                           ),
                         ),
@@ -115,8 +124,9 @@ class EventDetail extends StatelessWidget {
                               Icon(Icons.alarm),
                               Text("Time left"),
                               Text(loadedEvent.eventDate
-                                  .difference(DateTime.now())
-                                  .toString()),
+                                      .isBefore(DateTime.now())
+                                  ? 'Event Expired'
+                                  : '$timelefthrs Hours $timeleftmins Mins'),
                             ],
                           ),
                         )
@@ -129,8 +139,8 @@ class EventDetail extends StatelessWidget {
             Divider(),
             Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: 10,
-                horizontal: 10,
+                vertical: 5,
+                horizontal: 5,
               ),
               child: Column(
                 children: [
@@ -147,11 +157,21 @@ class EventDetail extends StatelessWidget {
                       )
                     ],
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 5,
+                      horizontal: 10,
+                    ),
+                    child: Divider(),
+                  ),
                   SizedBox(
-                    height: 300,
+                    height: 350,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      padding: const EdgeInsets.all(8.0),
                       child: SelectableLinkify(
+                        enableInteractiveSelection: true,
+                        scrollPhysics: BouncingScrollPhysics(),
+                        style: TextStyle(fontSize: 16),
                         onOpen: _onOpen,
                         text: loadedEvent.description,
                       ),

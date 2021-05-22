@@ -42,12 +42,14 @@ class _EditEventScreenState extends State<EditEventScreen> {
     "EEE",
     "MECH",
     "CIVIL",
+    "ALL",
   ];
   var _batches = [
     "2020-2024",
     "2019-2023",
     "2018-2022",
     "2017-2021",
+    "All",
   ];
   String currentSelectedBranch;
   String currentSelectedBatch;
@@ -191,6 +193,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     children: [
                       TextFormField(
                         initialValue: _initValues['title'],
+                        textCapitalization: TextCapitalization.sentences,
                         validator: (value) {
                           if (value.isEmpty) return "Event title is Compulsory";
                           if (value.length > 40)

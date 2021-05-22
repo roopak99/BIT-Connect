@@ -23,6 +23,7 @@ class UserEventItem extends StatelessWidget {
             TextButton.icon(
               onPressed: () async {
                 try {
+                  Navigator.of(context).pop();
                   await Provider.of<Events>(context, listen: false)
                       .deleteEvent(eid);
                 } catch (error) {
