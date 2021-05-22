@@ -1,11 +1,20 @@
 import 'package:bit_connect/providers/events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:provider/provider.dart';
 
 class EventDetail extends StatelessWidget {
   static const routeName = '/event-detail';
+
+  Future<void> _onOpen(LinkableElement link) async {
+    if (await canLaunch(link.url)) {
+      await launch(link.url);
+    } else {
+      throw 'Could not launch $link';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,9 +127,38 @@ class EventDetail extends StatelessWidget {
               ),
             ),
             Divider(),
-            SelectableLinkify(
-              onOpen: (link) => print("Clicked ${link.url}!"),
-              text: loadedEvent.description,
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 10,
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.description_rounded),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Description',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 300,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: SelectableLinkify(
+                        onOpen: _onOpen,
+                        text: loadedEvent.description,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
