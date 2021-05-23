@@ -1,5 +1,6 @@
 import 'package:bit_connect/providers/events.dart';
 import 'package:bit_connect/screens/edit_event_screen.dart';
+import 'package:bit_connect/screens/event_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -63,24 +64,30 @@ class UserEventItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 3,
-      child: ListTile(
-        title: Text(title),
-        trailing: SizedBox(
-          width: 100,
-          child: Row(
-            children: [
-              IconButton(
-                  icon: Icon(Icons.edit),
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pushNamed(EditEventScreen.routeName, arguments: eid);
-                  }),
-              IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    _showDialog(context);
-                  }),
-            ],
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context)
+              .pushNamed(EventDetail.routeName, arguments: eid);
+        },
+        child: ListTile(
+          title: Text(title),
+          trailing: SizedBox(
+            width: 100,
+            child: Row(
+              children: [
+                IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushNamed(EditEventScreen.routeName, arguments: eid);
+                    }),
+                IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      _showDialog(context);
+                    }),
+              ],
+            ),
           ),
         ),
       ),

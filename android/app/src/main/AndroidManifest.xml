@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.bit_connect">
+    package="com.bitd.bit_connect">
    <application
         android:label="BIT Connect"
         android:icon="@mipmap/ic_launcher">

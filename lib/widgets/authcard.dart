@@ -120,7 +120,7 @@ class _AuthCardState extends State<AuthCard> {
             child: Column(
               children: <Widget>[
                 Text(
-                  'Teacher\'s Login',
+                  'Login / Signup',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

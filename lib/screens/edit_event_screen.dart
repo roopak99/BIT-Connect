@@ -49,7 +49,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     "2019-2023",
     "2018-2022",
     "2017-2021",
-    "All",
+    "ALL",
   ];
   String currentSelectedBranch;
   String currentSelectedBatch;

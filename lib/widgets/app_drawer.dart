@@ -43,7 +43,7 @@ class AppDrawer extends StatelessWidget {
           Column(
             children: [
               AppBar(
-                title: Text('Hello User'),
+                title: Text('BIT Connect'),
                 automaticallyImplyLeading: false,
               ),
               ListTile(
@@ -56,7 +56,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pushReplacementNamed('/');
+                  Navigator.of(context).popAndPushNamed('/');
                 },
               ),
               Divider(),
@@ -70,8 +70,7 @@ class AppDrawer extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context)
-                      .pushReplacementNamed(UserEvents.routeName);
+                  Navigator.of(context).popAndPushNamed(UserEvents.routeName);
                 },
               ),
               Divider(),
