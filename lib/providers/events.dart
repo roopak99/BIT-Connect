@@ -13,6 +13,10 @@ class Events with ChangeNotifier {
   String userId;
   Events(this.authToken, this.userId, this._events);
 
+  void sortByName() {
+    _events.sort((a, b) => a.title.compareTo(b.title));
+  }
+
   List<Event> get events {
     return [..._events];
   }

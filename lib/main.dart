@@ -1,8 +1,11 @@
 import 'package:bit_connect/providers/auth.dart';
 import 'package:bit_connect/providers/events.dart';
+import 'package:bit_connect/screens/club_subscription_screen.dart';
 import 'package:bit_connect/screens/event_detail_screen.dart';
 import 'package:bit_connect/screens/events_overview_screen.dart';
+import 'package:bit_connect/screens/settings.dart';
 import 'package:bit_connect/screens/splash_screen.dart';
+import 'package:bit_connect/screens/user_detail_screen.dart';
 import 'package:bit_connect/screens/user_events_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,9 +42,15 @@ class MyApp extends StatelessWidget {
           builder: (ctx, auth, _) => MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'BIT Connect',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
+            // theme: ThemeData(
+            //   primarySwatch: Colors.blue,
+            //   buttonColor: Color.fromRGBO(169, 224, 22, 1),
+            //   appBarTheme:
+            //       AppBarTheme(backgroundColor: Color.fromRGBO(39, 39, 39, 1)),
+            // ),
+            theme: ThemeData.light(),
+            darkTheme: ThemeData.dark(),
+            themeMode: ThemeMode.system,
             home: auth.isAuth
                 ? EventsOverviewScreen()
                 : FutureBuilder(
@@ -58,6 +67,10 @@ class MyApp extends StatelessWidget {
               EventDetail.routeName: (context) => EventDetail(),
               UserEvents.routeName: (context) => UserEvents(),
               EditEventScreen.routeName: (context) => EditEventScreen(),
+              Settings.routeName: (context) => Settings(),
+              UserDetailScreen.routeName: (context) => UserDetailScreen(),
+              ClubSubscriptionScreen.routeName: (context) =>
+                  ClubSubscriptionScreen(),
             },
           ),
         ));

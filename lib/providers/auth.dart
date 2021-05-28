@@ -11,6 +11,7 @@ class Auth with ChangeNotifier {
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
+  String _username;
 
   bool get isAuth {
     return token != null;
@@ -63,6 +64,7 @@ class Auth with ChangeNotifier {
         'token': _token,
         'userId': _userId,
         'expiryDate': _expiryDate.toIso8601String(),
+        'username': 'roopak',
       });
       prefs.setString('userData', userData);
     } catch (error) {
@@ -93,6 +95,7 @@ class Auth with ChangeNotifier {
     _token = extractedUserData['token'];
     _userId = extractedUserData['userId'];
     _expiryDate = expiryDate;
+    _username = extractedUserData['username'];
 
     notifyListeners();
     _autologout();

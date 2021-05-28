@@ -43,10 +43,6 @@ class _AuthCardState extends State<AuthCard> {
   }
 
   Future<void> _submit() async {
-    // if (!_formKey.currentState.validate()) {
-    //   // Invalid!
-    //   return;
-    // }
     _formKey.currentState.save();
     setState(() {
       _isLoading = true;
@@ -183,7 +179,7 @@ class _AuthCardState extends State<AuthCard> {
                     ),
                     padding:
                         EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
-                    color: Theme.of(context).primaryColor,
+                    color: Theme.of(context).buttonColor,
                     textColor: Theme.of(context).primaryTextTheme.button.color,
                   ),
                 // ignore: deprecated_member_use
