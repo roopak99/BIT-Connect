@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:bit_connect/models/http_exception.dart';
 import 'package:bit_connect/providers/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 enum AuthMode { Signup, Login }
 
@@ -60,6 +63,16 @@ class _AuthCardState extends State<AuthCard> {
         await Provider.of<Auth>(context, listen: false)
             .signup(_authData['email'], _authData['password']);
       }
+      print(
+          '$username $currentSelectedBatch $currentSelectedBranch $universityrn');
+      final prefs = await SharedPreferences.getInstance();
+      final userData = jsonEncode({
+        'username': username,
+        'userbranch': currentSelectedBranch,
+        'userbatch': currentSelectedBatch,
+        'userurn': universityrn,
+      });
+      prefs.setString('userData', userData);
     } on HttpException catch (error) {
       var errorMessage = "Authentication failed";
       if (error.toString().contains('EMAIL_EXISTS')) {
@@ -96,6 +109,26 @@ class _AuthCardState extends State<AuthCard> {
     }
   }
 
+  var _branches = [
+    "CSE",
+    "IT",
+    "ETC",
+    "EE",
+    "EEE",
+    "MECH",
+    "CIVIL",
+  ];
+  var _batches = [
+    "2020-2024",
+    "2019-2023",
+    "2018-2022",
+    "2017-2021",
+  ];
+  String currentSelectedBranch;
+  String currentSelectedBatch;
+  String universityrn;
+  String username;
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
@@ -105,9 +138,9 @@ class _AuthCardState extends State<AuthCard> {
       ),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.Signup ? 340 : 280,
+        height: _authMode == AuthMode.Signup ? 600 : 280,
         constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 340 : 280),
+            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 600 : 280),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -116,14 +149,17 @@ class _AuthCardState extends State<AuthCard> {
             child: Column(
               children: <Widget>[
                 Text(
-                  'Login / Signup',
+                  _authMode == AuthMode.Signup ? 'Signup' : 'Login',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'E-Mail'),
+                  decoration: InputDecoration(
+                    labelText: 'E-Mail',
+                    icon: Icon(Icons.email_outlined),
+                  ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value.isEmpty || !value.contains('@')) {
@@ -136,7 +172,10 @@ class _AuthCardState extends State<AuthCard> {
                   },
                 ),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    icon: Icon(Icons.password),
+                  ),
                   obscureText: true,
                   controller: _passwordController,
                   validator: (value) {
@@ -152,7 +191,10 @@ class _AuthCardState extends State<AuthCard> {
                 if (_authMode == AuthMode.Signup)
                   TextFormField(
                     enabled: _authMode == AuthMode.Signup,
-                    decoration: InputDecoration(labelText: 'Confirm Password'),
+                    decoration: InputDecoration(
+                      labelText: 'Confirm Password',
+                      icon: Icon(Icons.password),
+                    ),
                     obscureText: true,
                     validator: _authMode == AuthMode.Signup
                         ? (value) {
@@ -163,6 +205,95 @@ class _AuthCardState extends State<AuthCard> {
                           }
                         : null,
                   ),
+                if (_authMode == AuthMode.Signup)
+                  TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
+                    validator: (value) {
+                      if (value.isEmpty) return "Name is Compulsory";
+                      if (value.length > 40)
+                        return "Maximum limit of characters exceeded (40)";
+                      return null;
+                    },
+                    onSaved: (value) {
+                      username = value;
+                    },
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      labelText: 'Your Name',
+                      icon: Icon(Icons.person),
+                    ),
+                  ),
+                if (_authMode == AuthMode.Signup)
+                  TextFormField(
+                    textCapitalization: TextCapitalization.sentences,
+                    validator: (value) {
+                      if (value.isEmpty) return "Roll Number is Compulsory";
+                      if (value.length > 40)
+                        return "Maximum limit of characters exceeded (40)";
+                      return null;
+                    },
+                    onSaved: (value) {
+                      universityrn = value;
+                    },
+                    textInputAction: TextInputAction.next,
+                    decoration: InputDecoration(
+                      labelText: 'University Roll Number',
+                      icon: Icon(Icons.format_list_numbered),
+                    ),
+                  ),
+                if (_authMode == AuthMode.Signup)
+                  DropdownButtonFormField<String>(
+                    validator: (value) {
+                      if (value.isEmpty) return "Branch must be selected";
+                      return null;
+                    },
+                    onSaved: (val) {},
+                    value: currentSelectedBranch,
+                    items: _branches.map<DropdownMenuItem<String>>(
+                      (String val) {
+                        return DropdownMenuItem(
+                          child: Text(val),
+                          value: val,
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        currentSelectedBranch = val;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      icon: Icon(Icons.person),
+                      labelText: 'Select Branch',
+                    ),
+                  ),
+                if (_authMode == AuthMode.Signup)
+                  DropdownButtonFormField<String>(
+                    validator: (value) {
+                      if (value.isEmpty) return "Batch must be selected";
+                      return null;
+                    },
+                    onSaved: (val) {},
+                    value: currentSelectedBatch,
+                    items: _batches.map<DropdownMenuItem<String>>(
+                      (String val) {
+                        return DropdownMenuItem(
+                          child: Text(val),
+                          value: val,
+                        );
+                      },
+                    ).toList(),
+                    onChanged: (val) {
+                      setState(() {
+                        currentSelectedBatch = val;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: 'Select Batch',
+                      icon: Icon(Icons.group_rounded),
+                    ),
+                  ),
+
                 SizedBox(
                   height: 20,
                 ),

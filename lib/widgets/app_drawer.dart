@@ -61,7 +61,7 @@ class _AppDrawerState extends State<AppDrawer> {
   Future<void> _getuserName() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey('userData')) {
-      return;
+      return '';
     }
     final extractedUserData =
         jsonDecode(prefs.getString('userData')) as Map<String, Object>;

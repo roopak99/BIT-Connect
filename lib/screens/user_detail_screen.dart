@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class UserDetailScreen extends StatefulWidget {
   static const routeName = '/user-detail-screen';
@@ -42,6 +45,17 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     }
 
     _form.currentState.save();
+  }
+
+  Future<void> setUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final extractedUserData =
+        jsonDecode(prefs.getString('userData')) as Map<String, Object>;
+
+    username = extractedUserData['username'];
+    universityrn = extractedUserData['userurn'];
+    currentSelectedBatch = extractedUserData['userbatch'];
+    currentSelectedBranch = extractedUserData['userbranch'];
   }
 
   @override

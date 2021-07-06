@@ -11,11 +11,13 @@ class Auth with ChangeNotifier {
   DateTime _expiryDate;
   String _userId;
   Timer _authTimer;
-  String _username;
+  // String _username;
 
   bool get isAuth {
     return token != null;
   }
+
+  // Future<void> setUserData() {}
 
   String get token {
     if (_expiryDate != null &&
@@ -60,19 +62,20 @@ class Auth with ChangeNotifier {
       _autologout();
       notifyListeners();
       final prefs = await SharedPreferences.getInstance();
-      final userData = jsonEncode({
+      final userAuthData = jsonEncode({
         'token': _token,
         'userId': _userId,
         'expiryDate': _expiryDate.toIso8601String(),
-        'username': 'roopak',
       });
-      prefs.setString('userData', userData);
+      prefs.setString('userAuthData', userAuthData);
     } catch (error) {
       throw error;
     }
   }
 
   Future<void> signup(String email, String password) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('firstTime', true);
     return _authenticate(email, password, 'signUp');
   }
 
@@ -82,20 +85,19 @@ class Auth with ChangeNotifier {
 
   Future<bool> tryAutoLogin() async {
     final prefs = await SharedPreferences.getInstance();
-    if (!prefs.containsKey('userData')) {
+    if (!prefs.containsKey('userAuthData')) {
       return false;
     }
-    final extractedUserData =
-        jsonDecode(prefs.getString('userData')) as Map<String, Object>;
-    final expiryDate = DateTime.parse(extractedUserData['expiryDate']);
+    final extractedUserAuthData =
+        jsonDecode(prefs.getString('userAuthData')) as Map<String, Object>;
+    final expiryDate = DateTime.parse(extractedUserAuthData['expiryDate']);
 
     if (expiryDate.isBefore(DateTime.now())) {
       return false;
     }
-    _token = extractedUserData['token'];
-    _userId = extractedUserData['userId'];
+    _token = extractedUserAuthData['token'];
+    _userId = extractedUserAuthData['userId'];
     _expiryDate = expiryDate;
-    _username = extractedUserData['username'];
 
     notifyListeners();
     _autologout();

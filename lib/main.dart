@@ -42,12 +42,6 @@ class MyApp extends StatelessWidget {
           builder: (ctx, auth, _) => MaterialApp(
             debugShowCheckedModeBanner: false,
             title: 'BIT Connect',
-            // theme: ThemeData(
-            //   primarySwatch: Colors.blue,
-            //   buttonColor: Color.fromRGBO(169, 224, 22, 1),
-            //   appBarTheme:
-            //       AppBarTheme(backgroundColor: Color.fromRGBO(39, 39, 39, 1)),
-            // ),
             theme: ThemeData.light(),
             darkTheme: ThemeData.dark(),
             themeMode: ThemeMode.system,
