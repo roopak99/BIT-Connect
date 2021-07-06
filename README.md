@@ -1,9 +1,9 @@
 # BIT Connect
 
-A flutter app developed to communicate events centrally to the students of BIT Durg 
+## A flutter app developed to communicate events centrally to the students of BIT Durg 
 
 
-Following are the screens of the app (in dark mode theme)
+### Following are the screens of the app (in dark mode theme)
 
 
 |[![Screenshot-20210706-151831.jpg](https://i.postimg.cc/vBDPWD7r/Screenshot-20210706-151831.jpg)](https://postimg.cc/S2F74SvR) |  [![Screenshot-20210706-151835.jpg](https://i.postimg.cc/3xnCnYxn/Screenshot-20210706-151835.jpg)](https://postimg.cc/75J2Lv72)| 
@@ -15,7 +15,7 @@ Following are the screens of the app (in dark mode theme)
 
 
 
-Following is the demo video
+### Following is the demo video
 
 [![Watch the video](https://img.youtube.com/vi/iGaReZWfn_0/maxresdefault.jpg)](https://youtu.be/iGaReZWfn_0)
 
