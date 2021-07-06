@@ -15,8 +15,9 @@ Following are the screens of the app (in dark mode theme)
 
 
 
+Following is the demo video
 
-
+video: https://www.youtube.com/embed/iGaReZWfn_0
 
 
 
